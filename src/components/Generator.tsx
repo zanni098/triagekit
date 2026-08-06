@@ -3,6 +3,7 @@ import { motion, useInView } from 'framer-motion'
 import { Download, FileText, Copy, Check } from 'lucide-react'
 import type { FormState, GeneratedOutputs, TemplateType } from '../App'
 import { useState } from 'react'
+import { slugify } from '../lib/slug'
 
 interface GeneratorProps {
   form: FormState
@@ -173,7 +174,7 @@ export function Generator({ form, update, outputs, types }: GeneratorProps) {
             <CodeBlock
               title="Issue Template"
               content={outputs.markdown}
-              filename={form.projectName ? `${form.projectName.toLowerCase().replace(/\s+/g, '-')}-${form.type}.md` : `ISSUE_TEMPLATE.md`}
+              filename={form.projectName ? `${slugify(form.projectName)}-${form.type}.md` : `ISSUE_TEMPLATE.md`}
             />
 
             <div className="grid sm:grid-cols-2 gap-4">
@@ -185,7 +186,7 @@ export function Generator({ form, update, outputs, types }: GeneratorProps) {
               <CodeBlock
                 title="Triage Checklist"
                 content={outputs.checklist}
-                filename={form.projectName ? `triage-checklist-${form.projectName.toLowerCase().replace(/\s+/g, '-')}.md` : `triage-checklist.md`}
+                filename={form.projectName ? `triage-checklist-${slugify(form.projectName)}.md` : `triage-checklist.md`}
               />
             </div>
 
@@ -193,7 +194,7 @@ export function Generator({ form, update, outputs, types }: GeneratorProps) {
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => {
-                  const slug = form.projectName ? form.projectName.toLowerCase().replace(/\s+/g, '-') : 'triagekit'
+                  const slug = form.projectName ? slugify(form.projectName) : 'triagekit'
                   downloadFile(outputs.markdown, `${slug}-${form.type}.md`)
                   downloadFile(outputs.config, `${slug}-config.yml`)
                   downloadFile(outputs.checklist, `${slug}-checklist.md`)

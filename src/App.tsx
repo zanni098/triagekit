@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { Hero } from './components/Hero'
 import { Generator } from './components/Generator'
 import { Features } from './components/Features'
+import { slugify } from './lib/slug'
 
 export type TemplateType = 'bug-report' | 'feature-request' | 'support-request'
 
@@ -25,7 +26,7 @@ const TYPES: { value: TemplateType; label: string; desc: string }[] = [
 ]
 
 function generateMarkdown(f: FormState): string {
-  const repo = f.projectName || 'your-project'
+  const repo = f.projectName ? slugify(f.projectName) : 'your-project'
   const url = f.repoUrl || `https://github.com/username/${repo}`
 
   const sections: Record<TemplateType, string[]> = {
