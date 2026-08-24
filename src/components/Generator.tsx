@@ -32,9 +32,40 @@ function CodeBlock({ title, content, filename }: { title: string; content: strin
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(content)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(content)
+      } else {
+        const ta = document.createElement('textarea')
+        ta.value = content
+        ta.setAttribute('readonly', '')
+        ta.style.position = 'fixed'
+        ta.style.left = '-9999px'
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('copy failed', err)
+      try {
+        const ta = document.createElement('textarea')
+        ta.value = content
+        ta.setAttribute('readonly', '')
+        ta.style.position = 'fixed'
+        ta.style.left = '-9999px'
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } catch (fallbackErr) {
+        console.error('clipboard fallback failed', fallbackErr)
+      }
+    }
   }
 
   return (
